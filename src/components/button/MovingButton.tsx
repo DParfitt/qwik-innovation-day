@@ -4,12 +4,16 @@ import {
   useStylesScoped$,
   useSignal,
   useWatch$,
+  useContext,
 } from "@builder.io/qwik";
+import { context } from "../../routes/thorn/store";
 
 import styles from "./MovingButton.css?inline";
 
 export default component$(() => {
   useStylesScoped$(styles);
+  const globalState = useContext(context);
+
   const state = useStore({
     x: 0,
     y: 0,
@@ -31,6 +35,10 @@ export default component$(() => {
       return x > rect.left && x < rect.right && y > rect.top && y < rect.bottom;
     };
     const isOverlapping = isMouseOverlappingWithButton(xState, yState);
+
+    if (isOverlapping) {
+      globalState.chaseCount += 1;
+    }
 
     if (isOverlapping && state.side === "left") {
       state.side = "right";
